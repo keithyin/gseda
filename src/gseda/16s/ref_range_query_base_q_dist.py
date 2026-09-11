@@ -325,17 +325,49 @@ def plot_baseq_distributions(all_bq: dict, output_prefix: str):
     plt.close(fig)
     print(f"Plot saved to: {out_path}")
 
-    # --- 概览统计 ---
+    # --- 概览统计（表格）---
     print("\nPer-op baseQ summary:")
+    hdr = ["op", "count", "mean", "min", "max", "p5", "p25", "p50", "p75", "p95"]
+    rows = []
     for op, label in zip(op_order, op_labels):
         vals = all_bq.get(op, [])
         if vals:
             sv = sorted(vals)
-            print(f"  {label:<10} count={len(vals):>8}  "
-                  f"mean={sum(vals) / len(vals):.1f}  range={sv[0]}-{sv[-1]}")
+            qs = _percentiles(sv, [5, 25, 50, 75, 95])
+            rows.append([label, len(vals), f"{sum(vals) / len(vals):.1f}",
+                         sv[0], sv[-1],
+                         f"{qs[0]:.0f}", f"{qs[1]:.0f}",
+                         f"{qs[2]:.0f}", f"{qs[3]:.0f}", f"{qs[4]:.0f}"])
         else:
-            print(f"  {label:<10} count={0}")
+            rows.append([label, 0, "", "", "", "", "", "", "", ""])
+    widths = [max(len(h), max((len(str(r[i])) for r in rows), default=0))
+              for i, h in enumerate(hdr)]
+    line = "  ".join(h.ljust(widths[i]) for i, h in enumerate(hdr))
+    print(line)
+    print("  ".join("-" * w for w in widths))
+    for r in rows:
+        print("  ".join(str(c).ljust(widths[i]) for i, c in enumerate(r)))
     return out_path
+
+
+def _percentiles(sv: list, ps) -> list:
+    """对已排序列表 sv，按线性内插计算各分位点（ps 为 0-100 百分位列表）。"""
+    n = len(sv)
+    out = []
+    for p in ps:
+        if n == 1:
+            out.append(float(sv[0]))
+            continue
+        # 虚拟下标 = (n-1) * p/100，线性内插到相邻两点之间
+        idx = (n - 1) * p / 100.0
+        lo = int(math.floor(idx))
+        hi = int(math.ceil(idx))
+        if lo == hi:
+            out.append(float(sv[lo]))
+        else:
+            frac = idx - lo
+            out.append(sv[lo] * (1 - frac) + sv[hi] * frac)
+    return out
 
 # ---------------------------------------------------------------------------
 # Main
