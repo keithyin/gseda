@@ -446,6 +446,7 @@ def main_cli():
         last_outdir = os.path.dirname(fact_metric_filename)
 
     # 最终整合：合并所有样本的 fact 数据，重算 ratio 并画图
+    print("################# Merged #########################")
     if all_fact_filenames and last_outdir:
         merged_aggr_filename = os.path.join(
             last_outdir, "merged.gsmm2-hp-tr-v3-aggr.csv")
