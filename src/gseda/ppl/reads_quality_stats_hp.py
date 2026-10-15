@@ -197,7 +197,7 @@ def plot_ratio(filename: str, N: int, outpath: str, true_cnt_min: int = 1) -> st
     if n == 0:
         logging.warning("No pure+mixed data after filtering, skip plotting")
         return outpath
-    cols = min(n, 3)
+    cols = min(n, 5)
     rows = (n + cols - 1) // cols
     fig, axes = plt.subplots(rows, cols, figsize=(
         cols * 5, rows * 4), squeeze=False)
