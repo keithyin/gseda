@@ -77,17 +77,28 @@ def dumping_new_subreads(sbr_bam_filepath: str, channels: Mapping[int, List[int]
 
 def main_cli():
 
-    sbr_bam_filepath = "/data/ccs_data/speed-test/benchmark-data/20250724_240601Y0002_Run0005_adapter.5h5k.bam"
-    smc_bam_filepath = "/data/ccs_data/speed-test/benchmark-data/20250724_240601Y0002_Run0005_adapter.smc_all_reads.bam"
-    min_length = 3000
-    max_length = 7000
-    channels = extract_interested_channels(
-        smc_bam_filepath, min_length=min_length, max_length=max_length)
-    print(f"OriChannelNum:{len(channels)}")
+    sbr_smc_pairs = [
+        (
+            "/data1/ccs_data/20261013-hla-8k/20261014_250804Y0004_Run1001_called.3.5h-demuxed.bam",
+            "/data1/ccs_data/20261013-hla-8k/20261014_250804Y0004_Run1001_called.3.5h-demuxed.2026Q2.smc_all_reads.bam"),
+        (
+            "/data1/ccs_data/20261013-hla-8k/20261014_250804Y0004_Run2001_called.3h-demuxed.bam",
+            "/data1/ccs_data/20261013-hla-8k/20261014_250804Y0004_Run2001_called.3h-demuxed.2026Q2.smc_all_reads.bam"
+        )
+    ]
 
-    channels = expand_channels(channels=channels, expected_num=500000)
-    dumping_new_subreads(sbr_bam_filepath=sbr_bam_filepath,
-                         channels=channels, min_length=min_length, max_length=max_length)
+    for sbr_bam_filepath, smc_bam_filepath in sbr_smc_pairs:
+
+        min_length = 7500
+        max_length = 8500
+        channels = extract_interested_channels(
+            smc_bam_filepath, min_length=min_length, max_length=max_length)
+
+        print(f"OriChannelNum:{len(channels)}")
+
+        channels = expand_channels(channels=channels, expected_num=500000)
+        dumping_new_subreads(sbr_bam_filepath=sbr_bam_filepath,
+                             channels=channels, min_length=min_length, max_length=max_length)
 
 
 if __name__ == "__main__":
