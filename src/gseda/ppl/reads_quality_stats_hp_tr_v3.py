@@ -376,6 +376,7 @@ def main(
         os.remove(aggr_metric_filename)
 
     # if not os.path.exists(aggr_metric_filename):
+    succ = False
     try:
         if not os.path.exists(aggr_metric_filename):
             succ = stats(fact_metric_filename,
