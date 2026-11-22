@@ -210,8 +210,9 @@ def main(
     aggr_metric_filename = f"{outdir}/{stem}.gsmm2-hp-tr-aggr.csv"
     if force and os.path.exists(aggr_metric_filename):
         os.remove(aggr_metric_filename)
-
-    stats(fact_metric_filename, filename=aggr_metric_filename)
+        
+    if not os.path.exists(aggr_metric_filename):
+        stats(fact_metric_filename, filename=aggr_metric_filename)
 
     return (aggr_metric_filename, fact_metric_filename)
 

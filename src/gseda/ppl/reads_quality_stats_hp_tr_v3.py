@@ -377,7 +377,8 @@ def main(
 
     # if not os.path.exists(aggr_metric_filename):
     try:
-        succ = stats(fact_metric_filename,
+        if not os.path.exists(aggr_metric_filename):
+            succ = stats(fact_metric_filename,
                      filename=aggr_metric_filename, print_df=print_df)
     except Exception as e:
         raise RuntimeError(
