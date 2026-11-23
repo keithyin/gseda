@@ -18,3 +18,5 @@ build/
 *.log
 
 **/out/*
+
+/.codebuddy
