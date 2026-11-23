@@ -422,6 +422,9 @@ def main_cli():
                         default=False, dest="ref_anchored")
     parser.add_argument("--true-cnt-min", type=int,
                         default=1, dest="true_cnt_min")
+    parser.add_argument("--plot-dist", type=int, default=0,
+                        help="0/1: enable plot_ratio distribution figure (default: 0)",
+                        dest="plot_dist")
     parser.add_argument(
         "-f", "--force",
         action="store_true",
@@ -443,7 +446,8 @@ def main_cli():
         _, _, fact_metric_filename = main(
             bam_file=bam, ref_fa=ref, force=args.force,
             short_aln=args.short_aln == 1, np_range=args.np_range, rq_range=args.rq_range,
-            max_n=args.max_n, ref_anchored=args.ref_anchored, true_cnt_min=args.true_cnt_min)
+            max_n=args.max_n, ref_anchored=args.ref_anchored, true_cnt_min=args.true_cnt_min,
+            enable_plot_ratio=bool(args.plot_dist))
         all_fact_filenames.append(fact_metric_filename)
         last_outdir = os.path.dirname(fact_metric_filename)
 
@@ -453,11 +457,12 @@ def main_cli():
         merged_aggr_filename = os.path.join(
             last_outdir, "merged.gsmm2-hp-tr-v3-aggr.csv")
         if stats(all_fact_filenames, filename=merged_aggr_filename, print_df=True):
-            plot_filename = os.path.join(
-                last_outdir, "hp-tr-v3-pure-mixed-ratio.png")
-            plot_ratio(merged_aggr_filename, N=args.max_n,
-                       outpath=plot_filename, true_cnt_min=args.true_cnt_min)
-            print(f"merged plot {plot_filename}")
+            if bool(args.plot_dist):
+                plot_filename = os.path.join(
+                    last_outdir, "hp-tr-v3-pure-mixed-ratio.png")
+                plot_ratio(merged_aggr_filename, N=args.max_n,
+                           outpath=plot_filename, true_cnt_min=args.true_cnt_min)
+                print(f"merged plot {plot_filename}")
 
 
 if __name__ == "__main__":
